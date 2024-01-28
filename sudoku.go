@@ -5,6 +5,7 @@ import (
 	"slices"
 )
 
+// struct to keep track of positions visited
 type position struct {
 	x int
 	y int
@@ -40,6 +41,7 @@ func SolveSudoku(puzzle [][]int) [][]int {
 					nextCandidate = 1
 				}
 
+				// keep track of candidates that have been used
 				used := []int{}
 
 				// check which numbers are candidates in the col
@@ -63,24 +65,31 @@ func SolveSudoku(puzzle [][]int) [][]int {
 					}
 				}
 
+				// find next available value based on what has already been used
 				for slices.Contains(used, nextCandidate) {
 					nextCandidate++
 				}
 
 				// check if backtracking is required
 				if nextCandidate >= 10 {
-					// implement backtracking
+					// reset this position
 					solved[i][j] = 0
 					trials[position{i, j}] = 0
 
+					// find last position that was attempted
 					i = hitlist[len(hitlist)-1].x
 					j = hitlist[len(hitlist)-1].y
+
+					// remove this position for future uses
 					if len(hitlist) > 0 {
 						hitlist = hitlist[:len(hitlist)-1]
 					}
 				} else {
+					// save solved value
 					solved[i][j] = nextCandidate
 					trials[position{i, j}] = nextCandidate
+
+					// save position that was solved
 					hitlist = append(hitlist, position{i, j})
 					j++
 				}
@@ -90,9 +99,6 @@ func SolveSudoku(puzzle [][]int) [][]int {
 		}
 		i++
 	}
-
-	fmt.Println(hitlist)
-	fmt.Println(trials)
 
 	return solved
 }
